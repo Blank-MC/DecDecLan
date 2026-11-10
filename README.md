@@ -1,7 +1,8 @@
-# DECLAN — Satu Naga, Dua Tanah
+# DECLAN — Satu Tim, Banyak Arena
 
-Website portofolio untuk tim **DECLAN** — kolektif esports & budaya Tiongkok–Jawa
-dari Semarang dan Yogyakarta. Dibuat sebagai situs statis (HTML + CSS + JS),
+Website portofolio untuk tim kompetisi **DECLAN** dari Semarang dan Yogyakarta.
+Fokusnya lintas bidang: web development, ethical hacking/CTF, esports/gaming,
+serta UI/UX dan creative tech. Dibuat sebagai situs statis (HTML + CSS + JS),
 tanpa framework dan tanpa build step.
 
 ---
@@ -73,10 +74,10 @@ pemain. Pemetaannya:
 Kalau ada foto yang tertukar, cukup ganti nama file di `assets/img/` atau ubah
 `src` pada kartu yang bersangkutan di `index.html`.
 
-Karena foto roster asli tidak tersedia, kartu pemain memakai **plate monogram**
+Karena foto anggota tim asli tidak tersedia, kartu tim memakai **plate monogram**
 (initial + karakter Han) yang dibuat murni dengan CSS — bukan foto orang.
-Kalau nanti ada foto pemain sungguhan, tinggal ganti `.plate` di dalam
-`.pcard-media` dengan sebuah `<img>`.
+Ganti nama dan bidang pada blok `<article class="pcard">` serta plate monogram
+jika profil anggota sebenarnya sudah tersedia.
 
 ---
 
@@ -85,18 +86,20 @@ Kalau nanti ada foto pemain sungguhan, tinggal ganti `.plate` di dalam
 | Ingin mengubah | Lokasi |
 |---|---|
 | Nama, tagline, deskripsi | `<head>` + bagian `.hero` |
-| Nama/role/origin/stat pemain | blok `<article class="pcard">` di `index.html` |
+| Nama/role/origin/stat anggota tim | blok `<article class="pcard">` di `index.html` |
+| Cabang kompetisi | hero, marquee, kartu tim, dan formulir di `index.html` |
 | Produk, harga, badge merch | blok `<article class="mcard">` di `#merch` (gambar ada di `.mcard-media`) |
 | Caption lookbook | atribut `data-caption` dan teks `.g-cap` |
 | Timeline prestasi | blok `<article class="t-item">` |
-| Nama partner | `.partner-track` |
+| Cabang pada marquee kompetisi | `.partner-track` |
 | Email & alamat | bagian `#kontak` + footer |
 | Link sosial | semua `href="#"` pada `.footer-social` (ganti dengan URL asli) |
 | Formulir | `#joinForm` — saat ini hanya menampilkan toast (belum kirim ke server) |
 
-> **Catatan:** nama orang, cerita, statistik, prestasi, alamat, email, nama
+> **Catatan:** nama orang, cerita, statistik, kompetisi/hasil lomba, alamat, email, nama
 > sponsor, serta **produk dan harga merch** di situs ini fiktif (dibuat untuk
-> kebutuhan portofolio). Ganti dengan data asli sebelum dipublikasikan.
+> kebutuhan portofolio). Ganti dengan data asli sebelum dipublikasikan. Untuk
+> ethical hacking, gunakan hanya lab, CTF, atau sistem yang memberi izin eksplisit.
 
 ---
 
@@ -132,10 +135,11 @@ Semua warna dan font diatur lewat CSS variables di bagian atas
 - Navigasi sticky + progress bar scroll + active section
 - Menu seluler full-screen
 - Hero paralaks + animasi huruf per huruf + crest logo berputar
+- **Section cabang & tim inti**: web development, ethical hacking/CTF, esports/gaming, UI/UX, dan creative tech
 - **Section merch Drop 001**: 8 produk, badge stok, harga, dan kartu varsity jacket yang bisa dibalik (depan/belakang)
-- Reveal on scroll, counter angka, kartu roster dengan efek tilt 3D
+- Reveal on scroll, counter angka, kartu tim dengan efek tilt 3D
 - Lightbox galeri (klik, panah kiri/kanan, Escape)
-- Form dengan validasi HTML + toast konfirmasi
+- Form demo dengan validasi HTML; data tidak dikirim atau disimpan
 - Cursor kustom (khusus perangkat dengan mouse)
 - `prefers-reduced-motion` support, skip link, focus state, aria-label
 - Responsive: 1440 / 1280 / 1024 / 768 / 600 / 390 px
@@ -150,5 +154,5 @@ Semua warna dan font diatur lewat CSS variables di bagian atas
 - Sudah diuji headless Chrome pada viewport 1440, 1280, 768, dan 390 tanpa
   horizontal scroll dan tanpa error console.
 
-Selamat memakai. Kalau mau menambah halaman (news, detail pemain, store),
+Selamat memakai. Kalau mau menambah halaman (news, profil anggota tim, store),
 halaman itu bisa dibuat dengan pola section yang sama seperti di `index.html`.

@@ -1623,6 +1623,12 @@ main,
 .merch-note b { color: var(--text); font-weight: 500; }
 
 /* ---------- Timeline / achievements ---------- */
+.timeline-disclaimer {
+  margin: -30px 0 24px;
+  font-size: .68rem;
+  line-height: 1.7;
+  color: var(--muted-2);
+}
 .timeline { position: relative; }
 .timeline::before {
   content: '';
