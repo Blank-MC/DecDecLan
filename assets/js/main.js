@@ -76,6 +76,9 @@
   /* ---------------- Mobile menu ---------------- */
   const navToggle = $('#navToggle');
   const mobileMenu = $('#mobileMenu');
+  const menuRegions = ['#main', '.site-footer', '#toTop']
+    .map((selector) => $(selector))
+    .filter(Boolean);
 
   function setMenu(open) {
     if (!navToggle || !mobileMenu) return;
@@ -83,7 +86,19 @@
     navToggle.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
     mobileMenu.classList.toggle('is-open', open);
     mobileMenu.setAttribute('aria-hidden', String(!open));
+    mobileMenu.toggleAttribute('inert', !open);
+    menuRegions.forEach((region) => { region.inert = open; });
     body.classList.toggle('is-locked', open);
+    if (open) {
+      const firstLink = $('a.mm-link', mobileMenu);
+      if (firstLink) {
+        window.setTimeout(() => {
+          if (mobileMenu.classList.contains('is-open')) {
+            firstLink.focus({ preventScroll: true });
+          }
+        }, 0);
+      }
+    }
   }
 
   if (navToggle && mobileMenu) {
@@ -99,6 +114,23 @@
       if (event.key === 'Escape' && mobileMenu.classList.contains('is-open')) {
         setMenu(false);
         navToggle.focus({ preventScroll: true });
+        return;
+      }
+
+      if (event.key === 'Tab' && mobileMenu.classList.contains('is-open')) {
+        const focusables = $$('a[href], button:not([disabled])', mobileMenu)
+          .filter((el) => el.getClientRects().length);
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const inside = mobileMenu.contains(document.activeElement);
+        if (event.shiftKey && (!inside || document.activeElement === first)) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && (!inside || document.activeElement === last)) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     });
 
@@ -220,6 +252,10 @@
       event.stopPropagation();
       const isBack = media.classList.toggle('is-back');
       flipBtn.setAttribute('aria-pressed', String(isBack));
+      const front = $('.m-front', media);
+      const back = $('.m-back', media);
+      if (front) front.setAttribute('aria-hidden', String(isBack));
+      if (back) back.setAttribute('aria-hidden', String(!isBack));
       const label = $('span', flipBtn);
       if (label) label.textContent = isBack ? 'Lihat depan' : 'Lihat belakang';
     });
@@ -278,6 +314,9 @@
   const lbPrev = $('#lbPrev');
   const lbNext = $('#lbNext');
   const triggers = $$('[data-lightbox]');
+  const pageRegions = ['#siteHeader', '#main', '.site-footer', '#toTop']
+    .map((selector) => $(selector))
+    .filter(Boolean);
   let current = 0;
   let lastFocus = null;
 
@@ -299,14 +338,28 @@
     showSlide(index);
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
+    lightbox.removeAttribute('inert');
+    pageRegions.forEach((region) => { region.inert = true; });
     body.classList.add('is-locked');
-    if (lbClose) lbClose.focus({ preventScroll: true });
+    if (lbClose) {
+      // The dialog flips from inert to interactive one frame after the
+      // attribute is removed; focusing earlier is silently refused.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (lightbox.classList.contains('is-open')) {
+            lbClose.focus({ preventScroll: true });
+          }
+        });
+      });
+    }
   }
 
   function closeLightbox() {
     if (!lightbox) return;
     lightbox.classList.remove('is-open');
     lightbox.setAttribute('aria-hidden', 'true');
+    lightbox.setAttribute('inert', '');
+    pageRegions.forEach((region) => { region.inert = false; });
     body.classList.remove('is-locked');
     if (lastFocus && typeof lastFocus.focus === 'function') {
       lastFocus.focus({ preventScroll: true });
@@ -331,6 +384,23 @@
       if (event.key === 'Escape') closeLightbox();
       if (event.key === 'ArrowLeft') showSlide(current - 1);
       if (event.key === 'ArrowRight') showSlide(current + 1);
+
+      if (event.key === 'Tab') {
+        const focusables = [lbClose, lbPrev, lbNext].filter(
+          (el) => el && !el.disabled && el.getClientRects().length
+        );
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const inside = lightbox.contains(document.activeElement);
+        if (event.shiftKey && (!inside || document.activeElement === first)) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && (!inside || document.activeElement === last)) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     });
   }
 
@@ -350,11 +420,10 @@
 
       const text = toast.querySelector('span');
       if (text) {
-        text.textContent = `Terima kasih, ${firstName}! Pendaftaranmu masuk. Kami hubungi dalam 3×24 jam.`;
+        text.textContent = `Ini masih formulir demo, ${firstName} — datamu belum terkirim. Hubungi halo@declan.team untuk mendaftar.`;
       }
 
       toast.classList.add('is-on');
-      form.reset();
 
       window.clearTimeout(toastTimer);
       toastTimer = window.setTimeout(() => toast.classList.remove('is-on'), 5000);
