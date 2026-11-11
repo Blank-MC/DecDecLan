@@ -342,15 +342,14 @@
     pageRegions.forEach((region) => { region.inert = true; });
     body.classList.add('is-locked');
     if (lbClose) {
-      // The dialog flips from inert to interactive one frame after the
-      // attribute is removed; focusing earlier is silently refused.
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (lightbox.classList.contains('is-open')) {
-            lbClose.focus({ preventScroll: true });
-          }
-        });
-      });
+      // Force a style recalc (visibility, inertness) before moving focus,
+      // then wait one task so the dialog is actually focusable.
+      void lightbox.offsetHeight;
+      setTimeout(() => {
+        if (lightbox.classList.contains('is-open')) {
+          lbClose.focus({ preventScroll: true });
+        }
+      }, 0);
     }
   }
 
